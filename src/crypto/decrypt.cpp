@@ -14,7 +14,9 @@ void Decryptor::decrypt(const SecretKey& sk,
   const auto& qi  = ctx.params().qi;
 
   std::size_t N = ctx.params().N;
-  std::size_t L = rns.num_moduli();
+  std::size_t L_total = rns.num_moduli();
+  std::size_t level   = static_cast<std::size_t>(ct.level);
+  std::size_t L       = std::min(level + 1, L_total);
 
   // Prepare output plaintext
   pt_out.poly      = PolyRNS(N, L);

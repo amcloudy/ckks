@@ -47,12 +47,25 @@ public:
   ///
   /// `steps` are logical slot-rotation amounts (e.g. +1, -1, +k).
   /// We internally map them to Galois elements and generate a key for each.
-  GaloisKeys generate_galois_keys(const SecretKey& sk,
-                                  const std::vector<int>& steps);
+  // GaloisKeys generate_galois_keys(const SecretKey& sk,
+  //                                 const std::vector<int>& steps);
+
+    // Generate Galois key for automorphism X -> X^{galois_elt} (mod 2N).
+  GaloisKey generate_galois_key(const SecretKey& sk,
+                                int galois_elt) const;
+
+  // Convenience: conjugation key (X -> X^{-1}) = galois_elt = 2N-1.
+  GaloisKey generate_conjugation_key(const SecretKey& sk) const;
+
+  // Generate rotation key for "rotate by step slots" (left rotation).
+  // step can be positive; we reduce it modulo num_slots.
+  GaloisKey generate_rotation_key(const SecretKey& sk,
+                                  int step) const;
+
 
 private:
   const ckks::CKKSContext* ctx_;
-  std::mt19937_64          rng_;
+  mutable std::mt19937_64          rng_;
 
   // ===== Sampling primitives =====
 
@@ -62,14 +75,14 @@ private:
   /// Sample small error polynomial:
   ///  - may start as centered discrete Gaussian or small uniform.
   ///  - parameterized by a standard deviation sigma.
-  void sample_error(core::PolyRNS& out, double sigma);
+  void sample_error(core::PolyRNS& out, double sigma) const;
 
   /// Sample a uniform polynomial modulo Q at top level.
   /// Uses all moduli in ctx_->params().qi.
-  void sample_uniform(core::PolyRNS& out);
+  void sample_uniform(core::PolyRNS& out) const;
 
   /// Helper: ensure 'out' is sized as (N, L) at top level.
-  void resize_poly_top(core::PolyRNS& out);
+  void resize_poly_top(core::PolyRNS& out) const;
 };
 
 } // namespace ckks::crypto

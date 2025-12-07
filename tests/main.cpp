@@ -25,6 +25,22 @@ void test_random_vector();
 void test_multi_scale();
 void test_multiple_rounds();
 
+void  test_eval_add();
+void  test_eval_sub();
+void  test_eval_neg();
+void  test_eval_add_plain();
+
+void  test_multiply_raw();
+void  test_multiply_relinearize();
+
+void  test_rescale_metadata();
+void  test_rescale_after_mul();
+
+void  test_conjugation_galois();
+
+void  test_single_step_rotation();
+void  test_multi_step_rotation();
+
 int main() {
   std::cout << "[CKKS] Running tests…\n";
 
@@ -57,6 +73,22 @@ int main() {
   test_random_vector();
   test_multi_scale();
   test_multiple_rounds();
+
+  test_eval_add();
+  test_eval_sub();
+  test_eval_neg();
+  test_eval_add_plain();
+
+  test_multiply_raw();
+  test_multiply_relinearize();
+
+  test_rescale_metadata();
+  test_rescale_after_mul();
+
+  test_conjugation_galois();
+
+  test_single_step_rotation();
+  test_multi_step_rotation();
 
   std::cout << "[CKKS] All tests passed.\n";
   return 0;

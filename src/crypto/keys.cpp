@@ -49,4 +49,12 @@ RelinKey::RelinKey(const ckks::CKKSContext& ctx)
   is_ntt = false;
 }
 
+GaloisKey::GaloisKey(const ckks::CKKSContext& ctx, int galois_elt_arg)
+    : a(ctx.params().N, ctx.rns().num_moduli()),
+      b(ctx.params().N, ctx.rns().num_moduli()),
+      galois_elt(galois_elt_arg),
+      level(static_cast<int>(ctx.rns().num_moduli()) - 1),
+      is_ntt(false)
+{}
+
 } // namespace ckks::crypto

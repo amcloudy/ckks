@@ -182,4 +182,41 @@ void poly_pointwise_mul(PolyRNS& out,
   }
 }
 
+void poly_apply_galois(PolyRNS& out,
+                       const PolyRNS& in,
+                       std::size_t N,
+                       std::uint64_t galois_elt,
+                       const RNSContext& ctx)
+{
+  // Negacyclic ring R_q[X]/(X^N + 1), N is power of 2.
+  // We work modulo 2N in exponent, with X^N = -1.
+  std::size_t L = in.num_moduli();
+  std::size_t twoN = 2 * N;
+
+  out = PolyRNS(N, L);
+
+  for (std::size_t j = 0; j < L; ++j) {
+    std::uint64_t q = ctx.modulus(j).q;
+    const auto& in_j = in[j];
+    auto&       out_j = out[j];
+
+    for (std::size_t i = 0; i < N; ++i) {
+      std::uint64_t coeff = in_j[i];
+      if (coeff == 0) continue;
+
+      std::size_t idx = (static_cast<std::size_t>(galois_elt) * i) % twoN;
+
+      if (idx < N) {
+        // X^i -> X^{idx}
+        out_j[idx] = coeff;
+      } else {
+        // X^i -> X^{idx-N} * (-1)  because X^N = -1
+        std::size_t idx2 = idx - N;
+        out_j[idx2] = (coeff == 0 ? 0 : q - coeff);
+      }
+    }
+  }
+}
+
+
 } // namespace ckks::core

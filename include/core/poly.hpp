@@ -66,4 +66,14 @@ void poly_pointwise_mul(PolyRNS& out,
                         const PolyRNS& b,
                         const RNSContext& ctx);
 
+/// Apply Galois automorphism X -> X^{galois_elt} to a negacyclic
+/// polynomial in R_q[X]/(X^N+1). galois_elt must be odd.
+/// out[i] = permuted (and possibly negated) coefficients of in.
+void poly_apply_galois(PolyRNS& out,
+                       const PolyRNS& in,
+                       std::size_t N,
+                       std::uint64_t galois_elt,
+                       const RNSContext& ctx);
+
+
 } // namespace ckks::core

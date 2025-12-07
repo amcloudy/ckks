@@ -1,4 +1,4 @@
-# CKKS-DEV — High-Performance CKKS Homomorphic Encryption Library
+# CKKS-Implementation
 
 A clean, minimal, from-scratch implementation of CKKS for research, backend development, and HE systems.
 
@@ -90,13 +90,7 @@ This repository is meant both for **research** and **performance engineering**.
 
 The repository includes a ready-to-use development container:
 
-### **1. Build the Docker image**
-
-```bash
-docker build -t ckks-dev .
-```
-
-### **2. Enter the container**
+### **1. Build and Run the Environment **
 
 ```bash
 ./docker_run.sh
@@ -257,3 +251,8 @@ Each phase is isolated and test-driven.
 * C API bindings
 * Python bindings (pybind11)
 
+Files Herrarchie 
+```md
+rns = > ntt =>
+params.hpp => 
+```
