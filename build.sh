@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-# ============================
+# ============================================================
 # Default Options
-# ============================
+# ============================================================
+
 BUILD_DIR="build"
 BUILD_TYPE="Release"
 BUILD_STATIC=ON
@@ -13,67 +14,53 @@ BUILD_TESTS=ON
 BUILD_BENCH=ON
 RUN_TESTS=OFF
 RUN_BENCH=OFF
+DO_INSTALL=OFF
 INSTALL_PREFIX="/usr/local"
 
 show_help() {
-    echo "CKKS Build Script"
-    echo ""
-    echo "Usage: ./build.sh [options]"
-    echo ""
-    echo "Options:"
-    echo "  --debug               Build in Debug mode (default: Release)"
-    echo "  --release             Build in Release mode (default)"
-    echo "  --static-only         Build only static library"
-    echo "  --shared-only         Build only shared library"
-    echo "  --no-tests            Disable unit tests"
-    echo "  --no-bench            Disable benchmarks"
-    echo "  --run-tests           Run tests after build"
-    echo "  --run-bench           Run benchmarks after build"
-    echo "  --clean               Remove build directory"
-    echo "  --install [prefix]    Install library to prefix (default: /usr/local)"
-    echo "  --help                Show this help message"
-    echo ""
+    cat <<EOF
+CKKS Build Script
+
+Usage: ./build.sh [options]
+
+Options:
+  --debug               Build in Debug mode
+  --release             Build in Release mode (default)
+  --static-only         Build only static library
+  --shared-only         Build only shared library
+  --no-tests            Disable unit tests
+  --no-bench            Disable benchmarks
+  --run-tests           Run ctest after build
+  --run-bench           Run benchmark executables after build
+  --clean               Delete build directory and exit
+  --install [prefix]    Install CKKS library (default prefix: /usr/local)
+  --help                Show this help message
+EOF
 }
 
-# ============================
+# ============================================================
 # Parse Arguments
-# ============================
+# ============================================================
+
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --debug)
-            BUILD_TYPE="Debug"
-            ;;
-        --release)
-            BUILD_TYPE="Release"
-            ;;
-        --static-only)
-            BUILD_STATIC=ON
-            BUILD_SHARED=OFF
-            ;;
-        --shared-only)
-            BUILD_STATIC=OFF
-            BUILD_SHARED=ON
-            ;;
-        --no-tests)
-            BUILD_TESTS=OFF
-            ;;
-        --no-bench)
-            BUILD_BENCH=OFF
-            ;;
-        --run-tests)
-            RUN_TESTS=ON
-            ;;
-        --run-bench)
-            RUN_BENCH=ON
-            ;;
+        --debug) BUILD_TYPE="Debug" ;;
+        --release) BUILD_TYPE="Release" ;;
+        --static-only) BUILD_STATIC=ON; BUILD_SHARED=OFF ;;
+        --shared-only) BUILD_STATIC=OFF; BUILD_SHARED=ON ;;
+        --no-tests) BUILD_TESTS=OFF ;;
+        --no-bench) BUILD_BENCH=OFF ;;
+        --run-tests) RUN_TESTS=ON ;;
+        --run-bench) RUN_BENCH=ON ;;
         --clean)
             echo "Cleaning build directory..."
             rm -rf "${BUILD_DIR}"
             exit 0
             ;;
         --install)
+            DO_INSTALL=ON
             shift
-            INSTALL_PREFIX="$1"
+            INSTALL_PREFIX="${1:-/usr/local}"
             ;;
         --help)
             show_help
@@ -88,11 +75,12 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-# ============================
-# Configure Build Directory
-# ============================
+# ============================================================
+# Summary
+# ============================================================
+
 echo "======================================"
-echo " CKKS Build Script"
+echo " CKKS Build Configuration"
 echo "======================================"
 echo "Build Type      : ${BUILD_TYPE}"
 echo "Static Library  : ${BUILD_STATIC}"
@@ -105,46 +93,51 @@ echo "======================================"
 mkdir -p "${BUILD_DIR}"
 cd "${BUILD_DIR}"
 
-# ============================
-# Run CMake
-# ============================
-echo "Running CMake configuration..."
+# ============================================================
+# Configure CMake
+# ============================================================
+
+echo "Configuring CMake..."
 
 cmake .. \
-    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-    -DCKKS_BUILD_STATIC=${BUILD_STATIC} \
-    -DCKKS_BUILD_SHARED=${BUILD_SHARED} \
-    -DCKKS_BUILD_TESTS=${BUILD_TESTS} \
-    -DCKKS_BUILD_BENCH=${BUILD_BENCH} \
-    -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}
+    -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+    -DCKKS_BUILD_STATIC="${BUILD_STATIC}" \
+    -DCKKS_BUILD_SHARED="${BUILD_SHARED}" \
+    -DCKKS_BUILD_TESTS="${BUILD_TESTS}" \
+    -DCKKS_BUILD_BENCH="${BUILD_BENCH}" \
+    -DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}"
 
-# ============================
+# ============================================================
 # Build
-# ============================
-echo "Building CKKS library..."
-cmake --build . -j$(nproc)
+# ============================================================
 
-# ============================
-# Optional: Run Tests
-# ============================
+echo "Building CKKS..."
+cmake --build . -j"$(nproc)"
+
+# ============================================================
+# Tests
+# ============================================================
+
 if [[ "${RUN_TESTS}" == "ON" ]]; then
     echo "Running tests..."
     ctest --output-on-failure
 fi
 
-# ============================
-# Optional: Run Benchmarks
-# ============================
+# ============================================================
+# Benchmarks
+# ============================================================
+
 if [[ "${RUN_BENCH}" == "ON" ]]; then
     echo "Running benchmarks..."
     ./src/bench/ckks_bench
 fi
 
-# ============================
-# Optional: Install
-# ============================
-if [[ "$INSTALL" == "ON" ]]; then
-    echo "Installing library to ${INSTALL_PREFIX}..."
+# ============================================================
+# Install
+# ============================================================
+
+if [[ "${DO_INSTALL}" == "ON" ]]; then
+    echo "Installing CKKS to ${INSTALL_PREFIX}..."
     cmake --install .
 fi
 
