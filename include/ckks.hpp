@@ -2,7 +2,6 @@
 
 // ============================================================================
 // CKKS Public Umbrella Header
-// Collects all public components and re-exports crypto API for users.
 // ============================================================================
 
 #include <cstddef>
@@ -11,7 +10,7 @@
 #include <cmath>
 
 // ----------------------
-// Core components
+// Core components first
 // ----------------------
 #include "core/rns.hpp"
 #include "core/params.hpp"
@@ -23,8 +22,18 @@
 #include "core/mul_rescale.hpp"
 #include "core/bootstrap.hpp"
 
+namespace ckks {
+
+// Forward declare CKKSContext so crypto headers can reference it
+class CKKSContext;
+
+// Forward declare CKKSParams as well
+struct CKKSParams;
+
+} // namespace ckks
+
 // ----------------------
-// Crypto structures
+// Crypto components (these require CKKSContext forward declaration!)
 // ----------------------
 #include "crypto/plaintext.hpp"
 #include "crypto/ciphertext.hpp"
@@ -44,58 +53,49 @@
 namespace ckks {
 
 // ============================================================================
-// CKKS Parameter Structure
+// Full definitions of CKKSParams and CKKSContext
 // ============================================================================
+
 struct CKKSParams {
-  std::size_t N = 0;
-  std::size_t num_slots = 0;
+    std::size_t N = 0;
+    std::size_t num_slots = 0;
+    int log_scale = 0;
+    int max_depth = 0;
+    double default_scale = 0.0;
 
-  int log_scale = 0;
-  int max_depth = 0;
+    std::vector<std::uint64_t> qi;
 
-  double default_scale = 0.0;
+    CKKSParams() = default;
 
-  std::vector<std::uint64_t> qi;   // modulus chain
-
-  CKKSParams() = default;
-
-  CKKSParams(std::size_t N,
-             const std::vector<std::uint64_t>& qi,
-             int log_scale,
-             int depth)
-      : N(N),
-        num_slots(N / 2),
-        log_scale(log_scale),
-        max_depth(depth),
-        default_scale(std::pow(2.0, log_scale)),
-        qi(qi) {}
+    CKKSParams(std::size_t N,
+               const std::vector<std::uint64_t>& qi,
+               int log_scale,
+               int depth)
+        : N(N),
+          num_slots(N / 2),
+          log_scale(log_scale),
+          max_depth(depth),
+          default_scale(std::pow(2.0, log_scale)),
+          qi(qi) {}
 };
 
-// ============================================================================
-// CKKS Global Context
-// ============================================================================
 class CKKSContext {
 public:
-  CKKSContext() = default;
-  explicit CKKSContext(const CKKSParams& p);
+    CKKSContext() = default;
+    explicit CKKSContext(const CKKSParams& p);
 
-  const CKKSParams& params() const noexcept { return params_; }
-  const core::RNSContext& rns() const noexcept { return rns_; }
+    const CKKSParams& params() const noexcept { return params_; }
+    const core::RNSContext& rns() const noexcept { return rns_; }
 
-  std::size_t N() const noexcept { return params_.N; }
-  std::size_t slots() const noexcept { return params_.num_slots; }
+    std::size_t N() const noexcept { return params_.N; }
+    std::size_t slots() const noexcept { return params_.num_slots; }
 
 private:
-  CKKSParams params_;
-  core::RNSContext rns_;
+    CKKSParams params_;
+    core::RNSContext rns_;
 };
 
-// ============================================================================
-// PUBLIC API EXPORTS (very important!)
-// These make ckks::Ciphertext available to users even though the class lives in
-// namespace ckks::crypto internally.
-// ============================================================================
-
+// Export crypto API
 using crypto::Plaintext;
 using crypto::Ciphertext;
 
