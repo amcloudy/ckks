@@ -18,35 +18,21 @@
 #include "core/paramgen.hpp"
 #include "core/poly.hpp"
 #include "core/ntt.hpp"
+#include "core/params.hpp"
+#include "core/poly.hpp"
+#include "core/rns.hpp"
 #include "core/rotation.hpp"
 
 // ----------------------
 // Crypto structures
 // ----------------------
-#include "core/params.hpp"      // If separate
 #include "crypto/plaintext.hpp"
 #include "crypto/ciphertext.hpp"
 #include "crypto/keys.hpp"
-
-// ----------------------
-// Key generation
-// ----------------------
 #include "crypto/keygen.hpp"
-
-// ----------------------
-// Encoder / Decoder
-// ----------------------
 #include "crypto/encoder.hpp"
-
-// ----------------------
-// Encryption / Decryption
-// ----------------------
 #include "crypto/encrypt.hpp"
 #include "crypto/decrypt.hpp"
-
-// ----------------------
-// Evaluator operations
-// ----------------------
 #include "crypto/evaluator.hpp"
 #include "crypto/eval_add.hpp"
 #include "crypto/eval_mul.hpp"
