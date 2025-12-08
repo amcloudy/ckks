@@ -53,19 +53,6 @@
 #include "crypto/eval_rescale.hpp"
 #include "crypto/eval_rotate.hpp"
 
-// ----------------------
-// Internal ops (bootstrapping optional)
-// ----------------------
-#include "crypto/bootstrap_api.hpp"
-
-// ----------------------
-// Utilities
-// ----------------------
-#include "utils/random.hpp"
-#include "utils/timer.hpp"
-#include "utils/simd.hpp"
-#include "utils/logging.hpp"
-
 namespace ckks {
 
 /// High-level CKKS parameter container.
