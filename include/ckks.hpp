@@ -23,7 +23,7 @@
 // ----------------------
 // Crypto structures
 // ----------------------
-#include "crypto/ckks_params.hpp"      // If separate
+#include "core/params.hpp"      // If separate
 #include "crypto/plaintext.hpp"
 #include "crypto/ciphertext.hpp"
 #include "crypto/keys.hpp"
