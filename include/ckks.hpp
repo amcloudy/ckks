@@ -1,13 +1,70 @@
 #pragma once
 
+// ============================================================================
+// CKKS Public Umbrella Header
+// Exposes the entire CKKS API as a single include <ckks.hpp>
+// ============================================================================
+
 #include <cstddef>
 #include <cstdint>
 #include <vector>
 #include <cmath>
 
+// ----------------------
+// Core components
+// ----------------------
 #include "core/rns.hpp"
 #include "core/params.hpp"
 #include "core/paramgen.hpp"
+#include "core/poly.hpp"
+#include "core/ntt.hpp"
+#include "core/rotation.hpp"
+
+// ----------------------
+// Crypto structures
+// ----------------------
+#include "crypto/ckks_params.hpp"      // If separate
+#include "crypto/plaintext.hpp"
+#include "crypto/ciphertext.hpp"
+#include "crypto/keys.hpp"
+
+// ----------------------
+// Key generation
+// ----------------------
+#include "crypto/keygen.hpp"
+
+// ----------------------
+// Encoder / Decoder
+// ----------------------
+#include "crypto/encoder.hpp"
+
+// ----------------------
+// Encryption / Decryption
+// ----------------------
+#include "crypto/encrypt.hpp"
+#include "crypto/decrypt.hpp"
+
+// ----------------------
+// Evaluator operations
+// ----------------------
+#include "crypto/evaluator.hpp"
+#include "crypto/eval_add.hpp"
+#include "crypto/eval_mul.hpp"
+#include "crypto/eval_rescale.hpp"
+#include "crypto/eval_rotate.hpp"
+
+// ----------------------
+// Internal ops (bootstrapping optional)
+// ----------------------
+#include "crypto/bootstrap_api.hpp"
+
+// ----------------------
+// Utilities
+// ----------------------
+#include "utils/random.hpp"
+#include "utils/timer.hpp"
+#include "utils/simd.hpp"
+#include "utils/logging.hpp"
 
 namespace ckks {
 
