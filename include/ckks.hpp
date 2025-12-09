@@ -9,9 +9,9 @@
 #include <vector>
 #include <cmath>
 
-// ----------------------
-// Core components first
-// ----------------------
+// ---------------------------------------------------------------------------
+// 1. Include core headers FIRST (these have no dependencies on crypto types)
+// ---------------------------------------------------------------------------
 #include "core/rns.hpp"
 #include "core/params.hpp"
 #include "core/paramgen.hpp"
@@ -24,17 +24,17 @@
 
 namespace ckks {
 
-// Forward declare CKKSContext so crypto headers can reference it
-class CKKSContext;
-
-// Forward declare CKKSParams as well
+// ---------------------------------------------------------------------------
+// 2. Forward declarations of CKKSContext and CKKSParams BEFORE crypto headers
+// ---------------------------------------------------------------------------
 struct CKKSParams;
+class CKKSContext;
 
 } // namespace ckks
 
-// ----------------------
-// Crypto components (these require CKKSContext forward declaration!)
-// ----------------------
+// ---------------------------------------------------------------------------
+// 3. Now include crypto headers — they depend on forward declarations
+// ---------------------------------------------------------------------------
 #include "crypto/plaintext.hpp"
 #include "crypto/ciphertext.hpp"
 #include "crypto/keys.hpp"
@@ -52,17 +52,17 @@ struct CKKSParams;
 
 namespace ckks {
 
-// ============================================================================
-// Full definitions of CKKSParams and CKKSContext
-// ============================================================================
-
+// ---------------------------------------------------------------------------
+// 4. Now define CKKSParams and CKKSContext AFTER all crypto types are known
+// ---------------------------------------------------------------------------
 struct CKKSParams {
     std::size_t N = 0;
     std::size_t num_slots = 0;
+
     int log_scale = 0;
     int max_depth = 0;
-    double default_scale = 0.0;
 
+    double default_scale = 0.0;
     std::vector<std::uint64_t> qi;
 
     CKKSParams() = default;
@@ -76,7 +76,8 @@ struct CKKSParams {
           log_scale(log_scale),
           max_depth(depth),
           default_scale(std::pow(2.0, log_scale)),
-          qi(qi) {}
+          qi(qi)
+    {}
 };
 
 class CKKSContext {
@@ -95,7 +96,10 @@ private:
     core::RNSContext rns_;
 };
 
-// Export crypto API
+// ---------------------------------------------------------------------------
+// 5. Export CKKS crypto API symbols (optional convenience aliases)
+// ---------------------------------------------------------------------------
+// These MUST come after crypto headers are included.
 using crypto::Plaintext;
 using crypto::Ciphertext;
 
