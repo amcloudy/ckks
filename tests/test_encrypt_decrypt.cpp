@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cmath>
 
-#include "ckks.hpp"
+#include "crypto/ckks.hpp"
 #include "crypto/encoder.hpp"
 #include "crypto/encrypt.hpp"
 #include "crypto/decrypt.hpp"

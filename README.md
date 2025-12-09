@@ -37,8 +37,9 @@ This repository is meant both for **research** and **performance engineering**.
 ├── docker_run.sh
 ├── build.sh
 ├── include/
-│   ├── ckks.hpp
+│   ├── ckks_lib.hpp
 │   ├── core/
+│   │   ├── ckks.hpp
 │   │   ├── params.hpp
 │   │   ├── paramgen.hpp
 │   │   ├── rns.hpp

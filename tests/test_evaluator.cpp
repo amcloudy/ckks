@@ -4,17 +4,17 @@
 #include <cassert>
 #include <cmath>
 
-#include "ckks.hpp"
-#include "crypto/encoder.hpp"
-#include "crypto/encrypt.hpp"
-#include "crypto/decrypt.hpp"
-#include "crypto/evaluator.hpp"
-#include "crypto/plaintext.hpp"
-#include "crypto/ciphertext.hpp"
-#include "crypto/keygen.hpp"
+#include "ckks_lib.hpp"
+// #include "crypto/encoder.hpp"
+// #include "crypto/encrypt.hpp"
+// #include "crypto/decrypt.hpp"
+// #include "crypto/evaluator.hpp"
+// #include "crypto/plaintext.hpp"
+// #include "crypto/ciphertext.hpp"
+// #include "crypto/keygen.hpp"
 
-using namespace ckks;
-using namespace ckks::crypto;
+// using namespace ckks;
+// using namespace ckks::crypto;
 
 // simple vector comparison
 static void check_close(const std::vector<double>& a,

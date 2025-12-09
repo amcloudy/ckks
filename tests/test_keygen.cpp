@@ -3,7 +3,7 @@
 #include <vector>
 #include <cmath>
 
-#include "ckks.hpp"
+#include "crypto/ckks.hpp"
 #include "crypto/keygen.hpp"
 #include "crypto/keys.hpp"
 
