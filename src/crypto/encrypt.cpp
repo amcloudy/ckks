@@ -14,9 +14,9 @@ void Encryptor::encrypt(const PublicKey& pk,
 {
     const auto& ctx = *ctx_;
     const auto& rns = ctx.rns();
-    const auto& qi  = ctx.params().qi;
+    const auto& qi  = ctx.params().qi();
 
-    std::size_t N = ctx.params().N;
+    std::size_t N = ctx.params().N();
     std::size_t L = rns.num_moduli();
 
     // Prepare ciphertext with 2 polys (c0, c1)

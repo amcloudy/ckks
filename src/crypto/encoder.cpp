@@ -18,11 +18,11 @@ Encoder::Encoder(const ckks::CKKSContext& context)
     : ctx_(&context)
 {
     const auto& p = context.params();
-    N_ = p.N;
+    N_ = p.N();
     if ((N_ & (N_ - 1)) != 0) {
         throw std::invalid_argument("Encoder: N must be power of 2.");
     }
-    slots_ = p.num_slots; // N/2
+    slots_ = p.slots(); // N/2
 }
 
 // ----------------------------- FFT helpers ----------------------------------
@@ -146,7 +146,7 @@ void Encoder::ckks_encode_complex(const std::vector<std::complex<double>>& slots
     }
 
     const auto& params = ctx_->params();
-    const auto& qi     = params.qi;
+    const auto& qi     = params.qi();
     const auto& rns    = ctx_->rns();
 
     std::size_t L_total = rns.num_moduli();
@@ -243,7 +243,7 @@ static void center_lift(const CKKSParams& params,
 {
     std::size_t N = poly.degree();
     std::size_t L = level + 1;
-    const auto& qi = params.qi;
+    const auto& qi = params.qi();
 
     out.assign(N, 0.0L);
 

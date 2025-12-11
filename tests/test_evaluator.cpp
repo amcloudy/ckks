@@ -37,13 +37,14 @@ static void check_close(const std::vector<double>& a,
 
 void test_eval_add()
 {
-  std::size_t N = 16;
-  std::vector<std::uint64_t> qi = {97, 193};
-  int log_scale = 20;
-  int depth = static_cast<int>(qi.size()) - 1;
+    CKKSParams p;
 
-  CKKSParams params(N, qi, log_scale, depth);
-  CKKSContext ctx(params);
+    p.set_poly_degree(8192);
+    p.set_depth(3);
+    p.set_scale(40);
+    p.set_security(core::SecurityLevel::SL128);
+
+    CKKSContext ctx(p);
 
   Encoder encoder(ctx);
   Encryptor encryptor(ctx);
@@ -58,8 +59,8 @@ void test_eval_add()
   std::vector<double> y = {0.5, 4.0, -1.0};
 
   Plaintext px(ctx), py(ctx);
-  encoder.encode(x, params.default_scale, depth, px);
-  encoder.encode(y, params.default_scale, depth, py);
+  encoder.encode(x, p.log_scale(), p.depth(), px);
+  encoder.encode(y, p.log_scale(), p.depth(), py);
 
   Ciphertext cx(ctx, 2), cy(ctx, 2);
   encryptor.encrypt(pk, px, cx);
@@ -88,13 +89,14 @@ void test_eval_add()
 
 void test_eval_sub()
 {
-  std::size_t N = 16;
-  std::vector<std::uint64_t> qi = {97, 193};
-  int log_scale = 20;
-  int depth = static_cast<int>(qi.size()) - 1;
+  CKKSParams p;
 
-  CKKSParams params(N, qi, log_scale, depth);
-  CKKSContext ctx(params);
+  p.set_poly_degree(8192);
+  p.set_depth(3);
+  p.set_scale(40);
+  p.set_security(core::SecurityLevel::SL128);
+
+  CKKSContext ctx(p);
 
   Encoder encoder(ctx);
   Encryptor encryptor(ctx);
@@ -109,8 +111,8 @@ void test_eval_sub()
   std::vector<double> y = {0.5, 4.0, -1.0};
 
   Plaintext px(ctx), py(ctx);
-  encoder.encode(x, params.default_scale, depth, px);
-  encoder.encode(y, params.default_scale, depth, py);
+  encoder.encode(x, p.log_scale(), p.depth(), px);
+  encoder.encode(y, p.log_scale(), p.depth(), py);
 
   Ciphertext cx(ctx, 2), cy(ctx, 2);
   encryptor.encrypt(pk, px, cx);
@@ -139,13 +141,14 @@ void test_eval_sub()
 
 void test_eval_neg()
 {
-  std::size_t N = 16;
-  std::vector<std::uint64_t> qi = {97, 193};
-  int log_scale = 20;
-  int depth = static_cast<int>(qi.size()) - 1;
+  CKKSParams p;
 
-  CKKSParams params(N, qi, log_scale, depth);
-  CKKSContext ctx(params);
+  p.set_poly_degree(8192);
+  p.set_depth(3);
+  p.set_scale(40);
+  p.set_security(core::SecurityLevel::SL128);
+
+  CKKSContext ctx(p);
 
   Encoder encoder(ctx);
   Encryptor encryptor(ctx);
@@ -159,7 +162,7 @@ void test_eval_neg()
   std::vector<double> x = {1.25, -0.75, 2.5};
 
   Plaintext px(ctx);
-  encoder.encode(x, params.default_scale, depth, px);
+  encoder.encode(x, p.log_scale(), p.depth(), px);
 
   Ciphertext cx(ctx, 2);
   encryptor.encrypt(pk, px, cx);
@@ -187,13 +190,14 @@ void test_eval_neg()
 
 void test_eval_add_plain()
 {
-  std::size_t N = 16;
-  std::vector<std::uint64_t> qi = {97, 193};
-  int log_scale = 20;
-  int depth = static_cast<int>(qi.size()) - 1;
+  CKKSParams p;
 
-  CKKSParams params(N, qi, log_scale, depth);
-  CKKSContext ctx(params);
+  p.set_poly_degree(8192);
+  p.set_depth(3);
+  p.set_scale(40);
+  p.set_security(core::SecurityLevel::SL128);
+
+  CKKSContext ctx(p);
 
   Encoder encoder(ctx);
   Encryptor encryptor(ctx);
@@ -208,8 +212,8 @@ void test_eval_add_plain()
   std::vector<double> y = {0.5, -1.0, 4.0};
 
   Plaintext px(ctx), py(ctx);
-  encoder.encode(x, params.default_scale, depth, px);
-  encoder.encode(y, params.default_scale, depth, py);
+  encoder.encode(x, p.log_scale(), p.depth(), px);
+  encoder.encode(y, p.log_scale(), p.depth(), py);
 
   Ciphertext cx(ctx, 2);
   encryptor.encrypt(pk, px, cx);

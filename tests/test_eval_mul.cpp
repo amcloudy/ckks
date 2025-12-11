@@ -39,9 +39,9 @@ static void manual_decrypt_deg2(const CKKSContext& ctx,
                                 core::PolyRNS& m_poly)
 {
   const auto& rns = ctx.rns();
-  const auto& qi  = ctx.params().qi;
+  const auto& qi  = ctx.params().qi();
 
-  std::size_t N = ctx.params().N;
+  std::size_t N = ctx.params().N();
   std::size_t L = rns.num_moduli();
 
   const PolyRNS& e0 = ct3[0];
@@ -89,13 +89,14 @@ static void manual_decrypt_deg2(const CKKSContext& ctx,
 
 void test_multiply_raw()
 {
-  std::size_t N = 16;
-  std::vector<std::uint64_t> qi = {97, 193};
-  int log_scale = 20;
-  int depth = static_cast<int>(qi.size()) - 1;
+  CKKSParams p;
 
-  CKKSParams params(N, qi, log_scale, depth);
-  CKKSContext ctx(params);
+  p.set_poly_degree(8192);
+  p.set_depth(3);
+  p.set_scale(40);
+  p.set_security(core::SecurityLevel::SL128);
+
+  CKKSContext ctx(p);
 
   Encoder encoder(ctx);
   Encryptor encryptor(ctx);
@@ -110,8 +111,8 @@ void test_multiply_raw()
   std::vector<double> y = {0.5, -1.0, 3.0};
 
   Plaintext px(ctx), py(ctx);
-  encoder.encode(x, params.default_scale, depth, px);
-  encoder.encode(y, params.default_scale, depth, py);
+  encoder.encode(x, p.log_scale(), p.depth(), px);
+  encoder.encode(y, p.log_scale(), p.depth(), py);
 
   Ciphertext cx(ctx, 2), cy(ctx, 2);
   encryptor.encrypt(pk, px, cx);
@@ -148,13 +149,14 @@ void test_multiply_raw()
 
 void test_multiply_relinearize()
 {
-  std::size_t N = 16;
-  std::vector<std::uint64_t> qi = {97, 193};
-  int log_scale = 20;
-  int depth = static_cast<int>(qi.size()) - 1;
+  CKKSParams p;
 
-  CKKSParams params(N, qi, log_scale, depth);
-  CKKSContext ctx(params);
+  p.set_poly_degree(8192);
+  p.set_depth(3);
+  p.set_scale(40);
+  p.set_security(core::SecurityLevel::SL128);
+
+  CKKSContext ctx(p);
 
   Encoder encoder(ctx);
   Encryptor encryptor(ctx);
@@ -170,8 +172,8 @@ void test_multiply_relinearize()
   std::vector<double> y = {0.5, -1.0, 3.0};
 
   Plaintext px(ctx), py(ctx);
-  encoder.encode(x, params.default_scale, depth, px);
-  encoder.encode(y, params.default_scale, depth, py);
+  encoder.encode(x, p.log_scale(), p.depth(), px);
+  encoder.encode(y, p.log_scale(), p.depth(), py);
 
   Ciphertext cx(ctx, 2), cy(ctx, 2);
   encryptor.encrypt(pk, px, cx);

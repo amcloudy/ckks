@@ -31,13 +31,14 @@ static void check_close(const std::vector<double>& a,
 
 void test_conjugation_galois()
 {
-  std::size_t N = 16;
-  std::vector<std::uint64_t> qi = {97, 193, 257};
-  int log_scale = 20;
-  int depth = static_cast<int>(qi.size()) - 1;
+    CKKSParams p;
 
-  CKKSParams params(N, qi, log_scale, depth);
-  CKKSContext ctx(params);
+    p.set_poly_degree(8192);
+    p.set_depth(3);
+    p.set_scale(40);
+    p.set_security(core::SecurityLevel::SL128);
+
+    CKKSContext ctx(p);
 
   Encoder   encoder(ctx);
   Encryptor encryptor(ctx);
@@ -55,7 +56,7 @@ void test_conjugation_galois()
   std::vector<double> v = {1.0, -2.5, 0.75};
 
   Plaintext pt(ctx);
-  encoder.encode(v, params.default_scale, depth, pt);
+  encoder.encode(v, p.log_scale(), p.depth(), pt);
 
   Ciphertext ct(ctx, 2);
   encryptor.encrypt(pk, pt, ct);

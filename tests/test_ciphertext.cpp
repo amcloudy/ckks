@@ -1,6 +1,5 @@
 #include "crypto/ckks.hpp"
 #include "core/params.hpp"
-#include "core/paramgen.hpp"
 #include "crypto/plaintext.hpp"
 #include "crypto/ciphertext.hpp"
 #include <cassert>
@@ -12,10 +11,13 @@ using namespace ckks::crypto;
 
 void test_plaintext_ciphertext_basic()
 {
-  ChainDesign cd{3, 40, 30};
-  auto qi = generate_modulus_chain(8192, SecurityLevel::SL128, cd);
+  CKKSParams p;
 
-  CKKSParams p(8192, qi, 40, 3);
+  p.set_poly_degree(8192);
+  p.set_depth(3);
+  p.set_scale(40);
+  p.set_security(core::SecurityLevel::SL128);
+
   CKKSContext ctx(p);
 
   Plaintext pt(ctx);

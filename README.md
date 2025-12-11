@@ -41,7 +41,6 @@ This repository is meant both for **research** and **performance engineering**.
 │   ├── core/
 │   │   ├── ckks.hpp
 │   │   ├── params.hpp
-│   │   ├── paramgen.hpp
 │   │   ├── rns.hpp
 │   │   ├── ntt.hpp
 │   │   └── poly.hpp

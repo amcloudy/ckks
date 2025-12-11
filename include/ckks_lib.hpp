@@ -12,3 +12,4 @@
 
 using namespace ckks;
 using namespace ckks::crypto;
+using namespace ckks::core;

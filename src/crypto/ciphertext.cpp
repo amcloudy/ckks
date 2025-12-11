@@ -8,10 +8,10 @@ Ciphertext::Ciphertext(const ckks::CKKSContext& ctx,
 {
   resize_like(ctx, poly_count_);
   const auto& p = ctx.params();
-  scale      = p.default_scale;
+  scale      = p.default_scale();
   level      = static_cast<int>(ctx.rns().num_moduli()) - 1;
   is_ntt     = false;
-  num_slots  = p.num_slots;
+  num_slots  = p.slots();
 }
 
 void Ciphertext::resize_like(const ckks::CKKSContext& ctx,

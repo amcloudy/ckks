@@ -42,7 +42,7 @@ static void center_lift_poly(const CKKSParams& params,
 {
   std::size_t N = poly.degree();
   std::size_t L = level + 1;
-  const auto& qi = params.qi;
+  const auto& qi = params.qi();
 
   out.assign(N, 0.0L);
 
@@ -238,9 +238,9 @@ void Evaluator::multiply_raw(const Ciphertext& a,
 
   const auto& ctx = *ctx_;
   const auto& rns = ctx.rns();
-  const auto& qi  = ctx.params().qi;
+  const auto& qi  = ctx.params().qi();
 
-  std::size_t N = ctx.params().N;
+  std::size_t N = ctx.params().N();
   std::size_t L = rns.num_moduli();
 
   // NTT copies
@@ -310,9 +310,9 @@ void Evaluator::relinearize(const Ciphertext& ct3,
 
   const auto& ctx = *ctx_;
   const auto& rns = ctx.rns();
-  const auto& qi  = ctx.params().qi;
+  const auto& qi  = ctx.params().qi();
 
-  std::size_t N = ctx.params().N;
+  std::size_t N = ctx.params().N();
   std::size_t L = rns.num_moduli();
 
   // KeySwitch on c2 using RLK = (a,b)
@@ -396,9 +396,9 @@ void Evaluator::rescale_to_next(const Ciphertext& in,
   const auto& ctx    = *ctx_;
   const auto& params = ctx.params();
   const auto& rns    = ctx.rns();
-  const auto& qi     = params.qi;
+  const auto& qi     = params.qi();
 
-  std::size_t N        = params.N;
+  std::size_t N        = params.N();
   std::size_t L_total  = rns.num_moduli();
   std::size_t level    = static_cast<std::size_t>(in.level);
 
@@ -473,9 +473,9 @@ void Evaluator::apply_galois(const Ciphertext& in,
 
   const auto& ctx = *ctx_;
   const auto& rns = ctx.rns();
-  const auto& qi  = ctx.params().qi;
+  const auto& qi  = ctx.params().qi();
 
-  std::size_t N = ctx.params().N;
+  std::size_t N = ctx.params().N();
   std::size_t L = rns.num_moduli();
 
   // 1) Apply automorphism to c0, c1

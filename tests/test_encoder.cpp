@@ -8,6 +8,10 @@
 #include "crypto/encoder.hpp"
 #include "crypto/plaintext.hpp"
 
+using namespace ckks;
+using namespace ckks::core;
+using namespace ckks::crypto;
+
 static std::mt19937_64 rng_enc(123456);
 
 static double rand_real() {
@@ -34,22 +38,22 @@ static void assert_close(const std::vector<double>& a,
 
 void test_encoder_basic_small_N()
 {
-    std::size_t N = 16;                    // tiny ring
-    std::vector<uint64_t> qi = { 193, 257 }; // small primes
-    int log_scale = 20;
-    int depth = qi.size() - 1;
+    CKKSParams p;
 
-    ckks::CKKSParams params(N, qi, log_scale, depth);
-    ckks::CKKSContext ctx(params);
+    p.set_poly_degree(8192);
+    p.set_depth(3);
+    p.set_scale(40);
+    p.set_security(core::SecurityLevel::SL128);
+
+    CKKSContext ctx(p);
 
     ckks::crypto::Encoder encoder(ctx);
 
     // One simple input
     std::vector<double> input = {1.2345, -2.5, 0.75};
-    double scale = params.default_scale;
-    int level = depth;
 
-    auto pt = encoder.encode(input, scale, level);
+
+    auto pt = encoder.encode(input, p.log_scale(), p.depth());
     auto output = encoder.decode(pt);
 
     // Only compare first input.size() entries
@@ -62,27 +66,25 @@ void test_encoder_basic_small_N()
 
 void test_encoder_random_full_slots()
 {
-    std::size_t N = 32;                     // small but bigger
-    std::vector<uint64_t> qi = { 193, 257, 769 };
-    int log_scale = 30;
-    int depth = qi.size() - 1;
+    CKKSParams p;
 
-    ckks::CKKSParams params(N, qi, log_scale, depth);
-    ckks::CKKSContext ctx(params);
+    p.set_poly_degree(8192);
+    p.set_depth(3);
+    p.set_scale(40);
+    p.set_security(core::SecurityLevel::SL128);
+
+    CKKSContext ctx(p);
     ckks::crypto::Encoder encoder(ctx);
 
-    std::size_t slots = params.num_slots;   // N/2
-    std::vector<double> input(slots);
+    std::vector<double> input(p.slots());
 
-    for (std::size_t i = 0; i < slots; i++)
+    for (std::size_t i = 0; i < p.slots(); i++)
         input[i] = rand_real();
 
-    double scale = params.default_scale;
-
-    auto pt = encoder.encode(input, scale, depth);
+    auto pt = encoder.encode(input, p.log_scale(), p.depth());
     auto out = encoder.decode(pt);
 
-    out.resize(slots);
+    out.resize(p.slots());
     assert_close(input, out, 1e-4);
 
     std::cout << "[OK] encoder random full-slot test passed\n";
@@ -90,20 +92,20 @@ void test_encoder_random_full_slots()
 
 void test_encoder_multiple_levels()
 {
-    std::size_t N = 32;
-    std::vector<uint64_t> qi = { 193, 257, 769 };
-    int log_scale = 25;
-    int depth = qi.size() - 1;
+    CKKSParams p;
 
-    ckks::CKKSParams params(N, qi, log_scale, depth);
-    ckks::CKKSContext ctx(params);
+    p.set_poly_degree(8192);
+    p.set_depth(3);
+    p.set_scale(40);
+    p.set_security(core::SecurityLevel::SL128);
+
+    CKKSContext ctx(p);
     ckks::crypto::Encoder encoder(ctx);
 
     std::vector<double> input = {0.5, -1.0, 3.14159};
-    double scale = params.default_scale;
 
-    for (int lvl = depth; lvl >= 0; lvl--) {
-        auto pt = encoder.encode(input, scale, lvl);
+    for (int lvl = p.depth(); lvl >= 0; lvl--) {
+        auto pt = encoder.encode(input, p.log_scale(), lvl);
         auto out = encoder.decode(pt);
         out.resize(input.size());
         assert_close(input, out, 1e-5);
@@ -114,13 +116,14 @@ void test_encoder_multiple_levels()
 
 void test_encoder_edge_values()
 {
-    std::size_t N = 32;
-    std::vector<uint64_t> qi = { 193, 257, 769 };
-    int log_scale = 25;
-    int depth = qi.size() - 1;
+    CKKSParams p;
 
-    ckks::CKKSParams params(N, qi, log_scale, depth);
-    ckks::CKKSContext ctx(params);
+    p.set_poly_degree(8192);
+    p.set_depth(3);
+    p.set_scale(40);
+    p.set_security(core::SecurityLevel::SL128);
+
+    CKKSContext ctx(p);
     ckks::crypto::Encoder encoder(ctx);
 
     // Test values near boundaries
@@ -130,11 +133,11 @@ void test_encoder_edge_values()
         -1.0,
         1e-3,
         -1e-3,
-        params.default_scale / 10.0,
-        -params.default_scale / 10.0
+        p.log_scale() / 10.0,
+        -p.log_scale() / 10.0
     };
 
-    auto pt = encoder.encode(input, params.default_scale, depth);
+    auto pt = encoder.encode(input, p.log_scale(), p.depth());
     auto out = encoder.decode(pt);
     out.resize(input.size());
 

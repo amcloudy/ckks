@@ -30,7 +30,7 @@ void KeyGenerator::resize_poly_top(core::PolyRNS& out) const{
     const auto& p   = ctx_->params();
     const auto& rns = ctx_->rns();
 
-    std::size_t N   = p.N;
+    std::size_t N   = p.N();
     std::size_t L   = rns.num_moduli();
 
     out = core::PolyRNS(N, L);
@@ -43,8 +43,8 @@ void KeyGenerator::sample_secret_ternary(core::PolyRNS& out) {
     resize_poly_top(out);
 
     std::uniform_int_distribution<int> dist(0, 2);
-    const auto& qi = ctx_->params().qi;
-    std::size_t N  = ctx_->params().N;
+    const auto& qi = ctx_->params().qi();
+    std::size_t N  = ctx_->params().N();
 
     for (std::size_t j = 0; j < out.num_moduli(); j++) {
         uint64_t q = qi[j];
@@ -69,8 +69,8 @@ void KeyGenerator::sample_error(core::PolyRNS& out, double sigma) const {
 
     std::normal_distribution<double> gauss(0.0, sigma);
 
-    const auto& qi = ctx_->params().qi;
-    std::size_t N  = ctx_->params().N;
+    const auto& qi = ctx_->params().qi();
+    std::size_t N  = ctx_->params().N();
 
     for (std::size_t j = 0; j < out.num_moduli(); j++) {
         uint64_t q = qi[j];
@@ -93,8 +93,8 @@ void KeyGenerator::sample_error(core::PolyRNS& out, double sigma) const {
 void KeyGenerator::sample_uniform(core::PolyRNS& out) const {
     resize_poly_top(out);
 
-    const auto& qi = ctx_->params().qi;
-    std::size_t N  = ctx_->params().N;
+    const auto& qi = ctx_->params().qi();
+    std::size_t N  = ctx_->params().N();
 
     for (std::size_t j = 0; j < out.num_moduli(); j++) {
         uint64_t q = qi[j];
@@ -136,9 +136,9 @@ PublicKey KeyGenerator::generate_public_key(const SecretKey& sk) {
     // b = -a*s + e (mod Q)
     const auto& ctx = *ctx_;
     const auto& rns = ctx.rns();
-    const auto& qi  = ctx.params().qi;
+    const auto& qi  = ctx.params().qi();
 
-    std::size_t N = ctx.params().N;
+    std::size_t N = ctx.params().N();
     std::size_t L = rns.num_moduli();
 
     // Resize pk.b
@@ -174,9 +174,9 @@ PublicKey KeyGenerator::generate_public_key(const SecretKey& sk) {
 RelinKey KeyGenerator::generate_relin_key(const SecretKey& sk) {
     const auto& ctx = *ctx_;
     const auto& rns = ctx.rns();
-    const auto& qi  = ctx.params().qi;
+    const auto& qi  = ctx.params().qi();
 
-    std::size_t N = ctx.params().N;
+    std::size_t N = ctx.params().N();
     std::size_t L = rns.num_moduli();
 
     // 1) Compute s^2 via NTT
@@ -240,9 +240,9 @@ GaloisKey KeyGenerator::generate_galois_key(const SecretKey& sk,
 {
   const auto& ctx = *ctx_;
   const auto& rns = ctx.rns();
-  const auto& qi  = ctx.params().qi;
+  const auto& qi  = ctx.params().qi();
 
-  std::size_t N = ctx.params().N;
+  std::size_t N = ctx.params().N();
   std::size_t L = rns.num_moduli();
 
   // 1) s_sigma = σ_g(s)
@@ -298,7 +298,7 @@ GaloisKey KeyGenerator::generate_galois_key(const SecretKey& sk,
 
 GaloisKey KeyGenerator::generate_conjugation_key(const SecretKey& sk) const
 {
-  std::size_t N = ctx_->params().N;
+  std::size_t N = ctx_->params().N();
   int g = static_cast<int>(2 * N - 1); // X -> X^{-1} mod 2N
   return generate_galois_key(sk, g);
 }
@@ -326,8 +326,8 @@ GaloisKey KeyGenerator::generate_rotation_key(const SecretKey& sk,
   const auto& ctx    = *ctx_;
   const auto& params = ctx.params();
 
-  std::size_t N       = params.N;
-  std::size_t slots   = params.num_slots;  // N/2
+  std::size_t N       = params.N();
+  std::size_t slots   = params.slots();  // N/2
   std::size_t M       = 2 * N;             // cyclotomic index
 
   if (slots == 0) {

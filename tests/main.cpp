@@ -2,7 +2,6 @@
 
 // Declare tests:
 void test_rns_and_ntt_roundtrip();
-void test_paramgen();
 void test_modulus_chain();
 
 void test_poly_add_sub_scalar();
@@ -46,8 +45,6 @@ int main() {
 
   test_rns_and_ntt_roundtrip();
   std::cout << "[CKKS] All ntt tests passed.\n";
-  test_paramgen();
-  std::cout << "[CKKS] All paramgen tests passed.\n";
   test_modulus_chain();
   std::cout << "[CKKS] All params tests passed.\n";
   test_poly_add_sub_scalar();

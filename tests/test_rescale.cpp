@@ -31,13 +31,14 @@ static void check_close(const std::vector<double>& a,
 
 void test_rescale_metadata()
 {
-  std::size_t N = 16;
-  std::vector<std::uint64_t> qi = {97, 193, 257};
-  int log_scale = 20;
-  int depth = static_cast<int>(qi.size()) - 1; // 2
+  CKKSParams p;
 
-  CKKSParams params(N, qi, log_scale, depth);
-  CKKSContext ctx(params);
+  p.set_poly_degree(8192);
+  p.set_depth(3);
+  p.set_scale(40);
+  p.set_security(core::SecurityLevel::SL128);
+
+  CKKSContext ctx(p);
 
   Encoder   encoder(ctx);
   Encryptor encryptor(ctx);
@@ -51,12 +52,12 @@ void test_rescale_metadata()
   std::vector<double> v = {1.0, 2.0, 3.0};
 
   Plaintext pt(ctx);
-  encoder.encode(v, params.default_scale, depth, pt); // level = 2
+  encoder.encode(v, p.log_scale(), p.depth(), pt); // level = 2
 
   Ciphertext ct(ctx, 2);
   encryptor.encrypt(pk, pt, ct);
 
-  assert(ct.level == depth);
+  assert(ct.level == p.depth());
 
   Ciphertext ct_res(ctx, 2);
   evaluator.rescale_to_next(ct, ct_res);
@@ -64,7 +65,7 @@ void test_rescale_metadata()
   // level must drop by 1
   assert(ct_res.level == ct.level - 1);
 
-  double expected_scale = ct.scale / static_cast<double>(qi.back());
+  double expected_scale = ct.scale / static_cast<double>(p.qi().back());
   double rel_err = std::fabs(ct_res.scale - expected_scale) / expected_scale;
   assert(rel_err < 0.2); // rough check
 
@@ -73,13 +74,14 @@ void test_rescale_metadata()
 
 void test_rescale_after_mul()
 {
-  std::size_t N = 16;
-  std::vector<std::uint64_t> qi = {97, 193, 257};
-  int log_scale = 20;
-  int depth = static_cast<int>(qi.size()) - 1;
+  CKKSParams p;
 
-  CKKSParams params(N, qi, log_scale, depth);
-  CKKSContext ctx(params);
+  p.set_poly_degree(8192);
+  p.set_depth(3);
+  p.set_scale(40);
+  p.set_security(core::SecurityLevel::SL128);
+
+  CKKSContext ctx(p);
 
   Encoder   encoder(ctx);
   Encryptor encryptor(ctx);
@@ -95,8 +97,8 @@ void test_rescale_after_mul()
   std::vector<double> y = {0.5, -1.0, 3.0};
 
   Plaintext px(ctx), py(ctx);
-  encoder.encode(x, params.default_scale, depth, px); // highest level
-  encoder.encode(y, params.default_scale, depth, py);
+  encoder.encode(x, p.log_scale(), p.depth(), px); // highest level
+  encoder.encode(y, p.log_scale(), p.depth(), py);
 
   Ciphertext cx(ctx, 2), cy(ctx, 2);
   encryptor.encrypt(pk, px, cx);
